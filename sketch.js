@@ -280,14 +280,6 @@ function draw(){
     a.draw();
   }
   // Display gravity control text.
-  noStroke();
-  fill(255);
-  textSize(25);
-  if(gravityDirection === 1){
-    text("Press SPACE to change gravity (now ↓ ↓ ↓)",20,785);
-  }else{
-    text("Press SPACE to change gravity (now ↑ ↑ ↑)",20,785);
-  }
     text("- Let Newton be confused ! ! ! -",240,30);
     pop();
     // The quantity of items picked up is displayed in the upper right corner of the screen.
