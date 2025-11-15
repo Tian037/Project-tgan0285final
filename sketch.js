@@ -11,6 +11,7 @@ let noisePoints = [];
 let scaleFactor;
 let offsetX = 0;
 let offsetY = 0;
+let pickedCount = 0;
 
 //Segment Class (Tree Branch).
 class Segment{
@@ -289,6 +290,11 @@ function draw(){
   }
     text("- Let Newton be confused ! ! ! -",240,30);
     pop();
+    // The quantity of items picked up is displayed in the upper right corner of the screen.
+  fill(255);
+  textSize(28);
+  textAlign(RIGHT, TOP);
+    text("Picked Apples: " + pickedCount, width - 20, 20);
 }
 
 // Make the canvas size match the screen size.
@@ -318,6 +324,7 @@ function mousePressed() {
       let d = dist(mx, my, a.x, a.y);
       if (d < 20) {   // 20 The radius of an apple
         apples.splice(i, 1);  // Remove this apple from array.
+        pickedCount++;
         break; // Pick up one at a time
       }
     }
