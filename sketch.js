@@ -9,6 +9,8 @@ let ground = 750;
 let topY = 20;
 let noisePoints = [];
 let scaleFactor;
+let offsetX = 0;
+let offsetY = 0;
 
 //Segment Class (Tree Branch).
 class Segment{
@@ -78,17 +80,18 @@ class Apple {
     this.swayPhase = random(0, TWO_PI);
   }
   update(){
-    if (this.state ==="waiting"){
-      // Waiting for 2 seconds before falling.
-      this.timer++;
-      if(this.timer > 120){
-        this.state = "falling";
-        this.timer = 0;
-      }
-    } else if (this.state ==="falling"){
-      // Apply gravity.
-      this.dropSpeed += gravity * gravityDirection;
-      this.y += this.dropSpeed;
+  if (this.state === "waiting"){
+    // Waiting for 2 seconds before falling.
+    this.timer++;
+    if(this.timer > 120){
+      this.state = "falling";
+      this.timer = 0;
+    }
+  } else if (this.state ==="falling"){
+    // Apply gravity.
+    this.dropSpeed += gravity * gravityDirection;
+    this.y += this.dropSpeed;
+
     // Hit ground.
     if(gravityDirection === 1 && this.y >= ground){
       this.y = ground;
@@ -102,15 +105,9 @@ class Apple {
       this.dropSpeed = 0;
       this.timer = 0;
     }
-  }
-      else if (this.state === "landed"){
-        // Rest for 2 seconds then return to tree.
-        this.timer++;
-        if(this.timer > 120){
-          this.reset();
-        }
-      }
-    }
+  } 
+  // state === "landed" no automatically reset
+}
   
   draw(){
     stroke(225,225,0);
@@ -186,7 +183,9 @@ function draw(){
   
   push();
   scale(scaleFactor);
-  translate((width / scaleFactor - DESIGN_W)/ 2, (height/ scaleFactor - DESIGN_H)/2);
+  offsetX = (width / scaleFactor - DESIGN_W)/ 2;
+  offsetY = (height/ scaleFactor - DESIGN_H)/2;
+  translate(offsetX, offsetY);
   // Draw background noise.
   noStroke();
   for (let p of noisePoints){
@@ -304,5 +303,23 @@ function keyPressed(){
     for (let a of apples){
       a.reset();
     } 
+  }
+}
+function mousePressed() {
+  // Convert the position of the mouse into design coordinates.（600×800）
+  let mx = mouseX / scaleFactor - offsetX;
+  let my = mouseY / scaleFactor - offsetY;
+
+  for (let i = apples.length - 1; i >= 0; i--) {
+    let a = apples[i];
+
+    // Only deal with the apples that have already fallen to the ground.
+    if (a.state === "landed" && a.y >= ground - 1) {
+      let d = dist(mx, my, a.x, a.y);
+      if (d < 20) {   // 20 The radius of an apple
+        apples.splice(i, 1);  // Remove this apple from array.
+        break; // Pick up one at a time
+      }
+    }
   }
 }
